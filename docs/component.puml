@@ -45,7 +45,7 @@ Container_Boundary(system, "API") {
     Rel(notification_service, email, "Envia email para", "JSON/HTTPS", $tags = "dashed")
 }
 
-Rel(user, login_controller, "Realiza chamadas API para", "Websocket")
+Rel(user, login_controller, "Realiza chamadas API para", "JSON/HTTPS")
 Rel(user, user_controller, "Realiza chamadas API para", "Websocket")
 Rel(user, product_controller, "Realiza chamadas API para", "Websocket")
 Rel(user, company_controller, "Realiza chamadas API para", "Websocket")
