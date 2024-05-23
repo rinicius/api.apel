@@ -1,0 +1,23 @@
+@startuml Context
+!include  https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title [Context] APEL 
+
+SHOW_PERSON_PORTRAIT()
+
+AddRelTag("dashed", $lineStyle = DashedLine())
+
+Person(user, "Aplicação Web")
+
+System(api, "API", "Realiza o login, armazena a demanda de produtos e empresas")
+
+System_Ext(email, "Serviço de email", "Sistema de envio de emails")
+System_Ext(brasil_api, "Brasil API", "Verificação de CNPJ")
+
+Rel(user, api, "Solicita Login, cria demanda de produtos e empresas, visualiza profissionais usando")
+Rel(api, email, "Envia email usando", $tags = "dashed")
+Rel(api, brasil_api, "Verifica CNPJ usando", $tags = "dashed")
+
+
+
+@enduml

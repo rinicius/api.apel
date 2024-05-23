@@ -1,0 +1,30 @@
+@startuml Container
+!include  https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!define ICON https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v2.4.0
+!includeurl ICON/devicons2/nestjs.puml
+!includeurl ICON/devicons2/mongodb.puml
+
+title [Container] APEL
+
+SHOW_PERSON_PORTRAIT()
+
+AddRelTag("dashed", $lineStyle = DashedLine())
+
+Person(user, "Aplicação Web")
+
+System_Ext(email, "Serviço de email", "Sistema de envio de emails")
+System_Ext(brasil_api, "Brasil API", "Verificação de CNPJ")
+
+System_Boundary(system, "API") {
+    Container(api, "API", "Nestjs", "Realiza o login, armazena a demanda de produtos e empresas", $sprite = "nestjs")
+    ContainerDb(db, "Banco de Dados", "Mongodb", "Armazena os produtos, empresas e usuários", $sprite = "mongodb")
+
+    Rel(api, db, "Lê e grava em", "Mongodb Protocol", $tags = "dashed")
+}
+
+
+Rel(user, api, "Solicita Login, cria demanda de produtos e empresas, visualiza profissionais usando", "Websocket")
+Rel(api, email, "Envia email usando", $tags = "dashed")
+Rel(api, brasil_api, "Verifica CNPJ usando", "JSON/HTTPS", $tags = "dashed")
+
+@enduml
