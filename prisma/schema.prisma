@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  email      String    @unique
+  name       String
+  cpf        String    @unique
+  password   String
+  birth_date DateTime
+  gender     String
+  department String?
+  biography  String?
+  website    String?
+  linkedin   String?
+  twitter    String?
+  company    Company[]
+  product    Product[]
+  status     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  update_at  DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Company {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  cnpj        String   @unique
+  description String
+  phone       String
+  website     String?
+  address     Address  @relation(fields: [addressId], references: [id])
+  addressId   String   @db.ObjectId
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?  @db.ObjectId
+  status      Boolean  @default(true)
+  created_at  DateTime @default(now())
+  update_at   DateTime @updatedAt
+
+  @@map("companies")
+}
+
+model Address {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  cep          String
+  state        String
+  city         String
+  company      Company[]
+  Product      Product[]
+  status       Boolean   @default(true)
+  created_at   DateTime  @default(now())
+  update_at    DateTime  @updatedAt
+
+  @@map("adresses")
+}
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String   @db.ObjectId
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?  @db.ObjectId
+  address     Address  @relation(fields: [addressId], references: [id])
+  addressId   String   @db.ObjectId
+  status      Boolean  @default(true)
+  created_at  DateTime @default(now())
+  update_at   DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Category {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  product    Product[]
+  status     Boolean   @default(true)
+  created_at DateTime  @default(now())
+  update_at  DateTime  @updatedAt
+
+  @@map("categories")
+}
