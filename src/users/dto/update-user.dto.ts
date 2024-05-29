@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsMongoId,
   IsNotEmpty,
@@ -48,4 +49,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsNotEmpty()
   twitter?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  status?: boolean;
 }

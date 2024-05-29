@@ -4,13 +4,30 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { WsException } from '@nestjs/websockets';
 import { FindOneUserDto } from './dto/find-user.dto';
+import { EncryptService } from 'src/encrypt/encrypt.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly encrypt: EncryptService,
+  ) {}
 
   async findAll() {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      include: {
+        company: {
+          select: {
+            id: true,
+            cnpj: true,
+            name: true,
+            description: true,
+            status: true,
+          },
+        },
+      },
+      where: { status: true },
+    });
 
     return {
       event: 'findAllUsers',
@@ -21,7 +38,9 @@ export class UsersService {
   async findOne(findOneUserDto: FindOneUserDto) {
     const { id } = findOneUserDto;
 
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({
+      where: { id, status: true },
+    });
 
     if (!user) {
       throw new WsException('Usuário não encontrado.');
@@ -34,9 +53,13 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const { birthDate, ...rest } = createUserDto;
+    const { birthDate, password, ...rest } = createUserDto;
 
-    await this.prisma.user.create({ data: { birth_date: birthDate, ...rest } });
+    const passwordHash = await this.encrypt.hashGenerate(password);
+
+    await this.prisma.user.create({
+      data: { ...rest, birth_date: birthDate, password: passwordHash },
+    });
 
     return {
       event: 'createUser',
@@ -47,13 +70,25 @@ export class UsersService {
   async update(updateUserDto: UpdateUserDto) {
     const { id, ...rest } = updateUserDto;
 
-    await this.prisma.user.update({
-      where: { id },
-      data: { ...rest },
-    });
-  }
+    if (updateUserDto?.password) {
+      const passwordHash = await this.encrypt.hashGenerate(
+        updateUserDto.password,
+      );
 
-  async remove(id: string) {
-    this.prisma.user.update({ where: { id }, data: { status: false } });
+      await this.prisma.user.update({
+        where: { id },
+        data: { ...rest, password: passwordHash },
+      });
+    } else {
+      await this.prisma.user.update({
+        where: { id },
+        data: { ...rest },
+      });
+    }
+
+    return {
+      event: 'updateUser',
+      data: 'Usuário atualizado com sucesso.',
+    };
   }
 }

@@ -31,10 +31,4 @@ export class UsersGateway {
   update(@MessageBody() updateUserDto: UpdateUserDto) {
     return this.usersService.update(updateUserDto);
   }
-
-  @SubscribeMessage('removeUser')
-  remove(@MessageBody() updateUserDto: UpdateUserDto) {
-    const { id } = updateUserDto;
-    return this.usersService.remove(id);
-  }
 }
