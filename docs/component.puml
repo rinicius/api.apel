@@ -21,11 +21,13 @@ Container_Boundary(system, "API") {
     Component(login_controller, "LoginController", "Controller", "Permite usuários autenticarem-se no sistema")
     Component(user_controller, "UsersController", "Controller", "Permite a visualização, edição e criação de usuários")
     Component(product_controller, "ProductsController", "Controller", "Permite a visualização, edição e criação de produtos")
+    Component(category_controller, "CategoriesController", "Controller", "Permite a visualização, edição e criação de categorias")
     Component(company_controller, "CompaniesController", "Controller", "Permite a visualização, edição e criação de empresas")
 
     Component(login_service, "LoginService", "Service", "Fornece a autenticação de usuários")
     Component(user_service, "UsersService", "Service", "Fornece a funcionalidade de gerenciamento de usuários")
     Component(product_service, "ProductsService", "Service", "Fornece a funcionalidade de gerenciamento de produtos")
+    Component(category_service, "CategoriesService", "Service", "Fornece a funcionalidade de gerenciamento de categorias de produtos")
     Component(company_service, "CompaniesService", "Service", "Fornece a funcionalidade de gerenciamento de empresas")
 
     Component(notification_service, "NotificationsService", "Service", "Notifica usuários através do email e da aplicação web")
@@ -35,12 +37,15 @@ Container_Boundary(system, "API") {
     Rel(login_controller, login_service, "Usa", $tags = "dashed")
     Rel(user_controller, user_service, "Usa", $tags = "dashed")
     Rel(product_controller, product_service, "Usa", $tags = "dashed")
+    Rel(category_controller, category_service, "Usa", $tags = "dashed")
+    Rel(product_service, category_service, "Usa", $tags = "dashed")
     Rel(company_controller, company_service, "Usa", $tags = "dashed")
     Rel(login_service, user_service, "Usa", $tags = "dashed")
 
     Rel(login_service, db, "Lê e grava em", "Mongodb protocol", $tags = "dashed")
     Rel(user_service, db, "Lê e grava em", "Mongodb protocol", $tags = "dashed")
     Rel(product_service, db, "Lê e grava em", "Mongodb protocol", $tags = "dashed")
+    Rel(category_service, db, "Lê e grava em", "Mongodb protocol", $tags = "dashed")
     Rel(company_service, db, "Lê e grava em", "Mongodb protocol", $tags = "dashed")
     Rel(notification_service, email, "Envia email para", "JSON/HTTPS", $tags = "dashed")
 }
