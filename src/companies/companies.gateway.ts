@@ -7,7 +7,10 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { FindOneCompanyDto } from './dto/find-company.dto';
+import { UseFilters } from '@nestjs/common';
+import { WsExceptionFilter } from 'src/pipes/validation.pipe';
 
+@UseFilters(WsExceptionFilter)
 @WebSocketGateway()
 export class CompaniesGateway {
   constructor(private readonly companiesService: CompaniesService) {}

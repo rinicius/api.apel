@@ -7,7 +7,14 @@ import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, CompaniesModule, EncryptModule, CategoriesModule, ProductsModule],
+  imports: [
+    UsersModule,
+    PrismaModule,
+    CompaniesModule,
+    EncryptModule,
+    CategoriesModule,
+    ProductsModule,
+  ],
   controllers: [],
   providers: [],
 })
