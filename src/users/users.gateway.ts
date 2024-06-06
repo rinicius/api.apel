@@ -7,7 +7,11 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindOneUserDto } from './dto/find-user.dto';
+import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { WsExceptionFilter } from 'src/pipes/validation.pipe';
 
+@UsePipes(new ValidationPipe())
+@UseFilters(WsExceptionFilter)
 @WebSocketGateway()
 export class UsersGateway {
   constructor(private readonly usersService: UsersService) {}

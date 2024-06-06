@@ -7,9 +7,11 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { FindOneCompanyDto } from './dto/find-company.dto';
-import { UseFilters } from '@nestjs/common';
+import { UseFilters, UsePipes } from '@nestjs/common';
 import { WsExceptionFilter } from 'src/pipes/validation.pipe';
+import { ValidationPipe } from 'src/pipes/dtovalidate.pipe';
 
+@UsePipes(new ValidationPipe())
 @UseFilters(WsExceptionFilter)
 @WebSocketGateway()
 export class CompaniesGateway {

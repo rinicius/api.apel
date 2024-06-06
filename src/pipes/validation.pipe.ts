@@ -1,8 +1,7 @@
 import { Catch, ArgumentsHost } from '@nestjs/common';
-import { BaseWsExceptionFilter, WsException } from '@nestjs/websockets';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
 
-@Catch(WsException, PrismaClientKnownRequestError)
+@Catch()
 export class WsExceptionFilter extends BaseWsExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     super.catch(exception, host);

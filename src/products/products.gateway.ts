@@ -7,7 +7,12 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FindProductDto } from './dto/find-product.dto';
+import { UseFilters, UsePipes } from '@nestjs/common';
+import { ValidationPipe } from 'src/pipes/dtovalidate.pipe';
+import { WsExceptionFilter } from 'src/pipes/validation.pipe';
 
+@UsePipes(new ValidationPipe())
+@UseFilters(WsExceptionFilter)
 @WebSocketGateway()
 export class ProductsGateway {
   constructor(private readonly productsService: ProductsService) {}
