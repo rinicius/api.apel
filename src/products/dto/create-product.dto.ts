@@ -26,7 +26,7 @@ export class CreateProductDto {
 
   @IsMongoId()
   @IsOptional()
-  companyId?: string;
+  cnpj?: string;
 
   @ValidateIf((fields) => !fields?.companyId)
   @ValidateNested()

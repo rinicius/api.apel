@@ -102,7 +102,7 @@ export class CompaniesService {
   }
 
   async findOne(findOneCompanyDto: FindOneCompanyDto) {
-    const { id } = findOneCompanyDto;
+    const { cnpj } = findOneCompanyDto;
 
     const company = await this.prisma.company.findUnique({
       select: {
@@ -135,7 +135,7 @@ export class CompaniesService {
         },
         status: true,
       },
-      where: { id, status: true },
+      where: { cnpj, status: true },
     });
 
     if (!company) {
@@ -150,6 +150,11 @@ export class CompaniesService {
 
   async create(createCompanyDto: CreateCompanyDto) {
     const { address, userId, cnpj, ...rest } = createCompanyDto;
+    const company = await this.findOne({ cnpj });
+
+    if (company) {
+      throw new WsException('A empresa já existe.');
+    }
 
     const check = await this.compareCnpj(cnpj, createCompanyDto);
 
@@ -157,18 +162,14 @@ export class CompaniesService {
       throw new WsException('Erro na validação dos dados do CNPJ.');
     }
 
-    await this.prisma.company
-      .create({
-        data: {
-          ...rest,
-          cnpj,
-          user: { connect: { id: userId } },
-          address: { create: address },
-        },
-      })
-      .catch(() => {
-        throw new WsException('Erro na criação de um novo objeto no banco');
-      });
+    await this.prisma.company.create({
+      data: {
+        ...rest,
+        cnpj,
+        user: { connect: { id: userId } },
+        address: { create: address },
+      },
+    });
 
     return {
       event: 'createCompany',
@@ -183,36 +184,28 @@ export class CompaniesService {
       const { cep, city, neighborhood, number, state, street, complement } =
         address;
 
-      await this.prisma.company
-        .update({
-          where: { id },
-          data: {
-            ...rest,
-            address: {
-              update: {
-                cep,
-                city,
-                neighborhood,
-                number,
-                state,
-                street,
-                complement,
-              },
+      await this.prisma.company.update({
+        where: { id },
+        data: {
+          ...rest,
+          address: {
+            update: {
+              cep,
+              city,
+              neighborhood,
+              number,
+              state,
+              street,
+              complement,
             },
           },
-        })
-        .catch(() => {
-          throw new WsException('Erro na atualização do objeto no banco');
-        });
+        },
+      });
     } else {
-      await this.prisma.company
-        .update({
-          where: { id },
-          data: rest,
-        })
-        .catch(() => {
-          throw new WsException('Erro na atualização do objeto no banco');
-        });
+      await this.prisma.company.update({
+        where: { id },
+        data: rest,
+      });
     }
 
     return {

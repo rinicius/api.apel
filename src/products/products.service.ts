@@ -75,11 +75,10 @@ export class ProductsService {
   }
 
   async create(createProductDto: CreateProductDto) {
-    if (createProductDto?.companyId) {
-      const { name, description, categoryId, userId, companyId } =
-        createProductDto;
+    if (createProductDto?.cnpj) {
+      const { name, description, categoryId, userId, cnpj } = createProductDto;
 
-      const company = await this.companiesService.findOne({ id: companyId });
+      const company = await this.companiesService.findOne({ cnpj });
 
       await this.prisma.product.create({
         data: {
@@ -87,7 +86,7 @@ export class ProductsService {
           description,
           categoryId,
           userId,
-          companyId,
+          companyId: company.data.id,
           addressId: company.data.address.id,
         },
       });

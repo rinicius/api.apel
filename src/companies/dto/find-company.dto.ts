@@ -1,6 +1,7 @@
-import { IsMongoId } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class FindOneCompanyDto {
-  @IsMongoId()
-  id: string;
+  @IsString()
+  @IsNotEmpty()
+  cnpj: string;
 }

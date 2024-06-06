@@ -40,6 +40,12 @@ export class CategoriesService {
   async upsert(upsertCategoryDto: UpsertCategoryDto) {
     const { name, status } = upsertCategoryDto;
 
+    const categoryValidate = await this.findOne({ name });
+
+    if (categoryValidate) {
+      throw new WsException('Categoria já existente.');
+    }
+
     const category = await this.prisma.category.upsert({
       where: { name },
       update: { name, status },
